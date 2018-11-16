@@ -7,10 +7,10 @@ const program = require('commander');
 
 
 
-const TARGET_FILE_PREFIX ="Lohnabrechnung_";
+var TARGET_FILE_PREFIX ="Lohnabrechnung_";
 var SOURCE_DIR ="./input/";
 var TARGET_DIR="./output/";
-const DEBUG_OUTPUT=false;
+var DEBUG_OUTPUT=false;
 let pdfFileList = fs.readdirSync(SOURCE_DIR);
 
 
@@ -19,6 +19,7 @@ let pdfFileList = fs.readdirSync(SOURCE_DIR);
 program
   .version('1.0.0', '-v, --version')
   .usage('[options]')
+  .option('-d, --debug', 'enable debug-mode')
   .option('-i, --input [directoy]', 'input directory with PDFs')
   .option('-o, --output [directory]', 'output directory for renamed PDFs')
   .parse(process.argv);
@@ -32,6 +33,9 @@ else {
   TARGET_DIR = program.output+"/"
 }
 
+if(program.debug) {
+  DEBUG_OUTPUT = true;
+} 
 /*#### HELPER ####*/
 //Helper
 function usage(){
