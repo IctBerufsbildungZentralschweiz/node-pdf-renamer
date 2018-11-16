@@ -54,10 +54,10 @@ function renameFile(input, output) {
 }
 // Copy a file
 function copyFile(input, output) {
-  //console.log("Copy from '"+input+"' to '"+output+ "'");
   fs.copyFile(input,output, function(err) {
     if ( err ) console.log('ERROR: ' + err);
   });
+  console.log("INFO: Copied from '"+input+"'  to '"+output+ "'!");
 }
 // Get file extionsion
 function getExtension(filename) {
