@@ -11,7 +11,6 @@ var TARGET_FILE_PREFIX ="Lohnabrechnung_";
 var SOURCE_DIR ="./input/";
 var TARGET_DIR="./output/";
 var DEBUG_OUTPUT=false;
-let pdfFileList = fs.readdirSync(SOURCE_DIR);
 
 
 
@@ -31,6 +30,13 @@ if(!program.input || !program.output) {
 else {
   SOURCE_DIR = program.input+"/"
   TARGET_DIR = program.output+"/"
+  stats = fs.lstatSync(SOURCE_DIR);
+  stats2 = fs.lstatSync(TARGET_DIR);
+
+  if(!stats.isDirectory() || !stats2.isDirectory()) {
+    console.log("ERROR: Please check input or output dir, one of them is not a directory!");
+    process.exit(1);
+  }
 }
 
 if(program.debug) {
@@ -69,6 +75,9 @@ function debug(msg) {
     console.log(msg);
   }
 }
+
+let pdfFileList = fs.readdirSync(SOURCE_DIR);
+
 
 /*#### MAIN ####*/
 // Parse and copy the PDF
