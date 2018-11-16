@@ -2,8 +2,8 @@
 Kleine NodeJS Applikation um Lohnabrechnungen vom ICT-BZ Sekretariat umzubennen 
 
 ## Requirements
-* NodeJS
-* GitBash
+* [NodeJS installiert](https://nodejs.org/en/)
+* [GitBash installiert (nur Windows)](https://git-scm.com/downloads)
 
 ## Installation
 ```bash
@@ -13,7 +13,6 @@ npm i
 ```
 
 ## Usage
-Mittels GitBash in den Ordner navigieren, das Script kann wie folgt ausgeführt werden:
 ```bash
 $ ./pdfRenameTool -h
 Usage: pdfRenameTool [options]
