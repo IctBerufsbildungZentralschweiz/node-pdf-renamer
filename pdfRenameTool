@@ -1,0 +1,97 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const pdf = require('pdf-parse');
+const program = require('commander');
+
+
+
+
+const TARGET_FILE_PREFIX ="Lohnabrechnung_";
+var SOURCE_DIR ="./input/";
+var TARGET_DIR="./output/";
+const DEBUG_OUTPUT=false;
+let pdfFileList = fs.readdirSync(SOURCE_DIR);
+
+
+
+
+program
+  .version('1.0.0', '-v, --version')
+  .usage('[options]')
+  .option('-i, --input [directoy]', 'input directory with PDFs')
+  .option('-o, --output [directory]', 'output directory for renamed PDFs')
+  .parse(process.argv);
+
+
+if(!program.input || !program.output) {
+  usage();
+}
+else {
+  SOURCE_DIR = program.input+"/"
+  TARGET_DIR = program.output+"/"
+}
+
+/*#### HELPER ####*/
+//Helper
+function usage(){
+  program.outputHelp();
+}
+
+// Remove whitespaces
+function removeWhitespace(text) {
+  return text.replace(/\s/g, "");
+}
+// Rename a file
+function renameFile(input, output) {
+  fs.rename(input,output, function(err) {
+    if ( err ) console.log('ERROR: ' + err);
+  });
+}
+// Copy a file
+function copyFile(input, output) {
+  //console.log("Copy from '"+input+"' to '"+output+ "'");
+  fs.copyFile(input,output, function(err) {
+    if ( err ) console.log('ERROR: ' + err);
+  });
+}
+// Get file extionsion
+function getExtension(filename) {
+  var i = filename.lastIndexOf('.');
+  return (i < 0) ? '' : filename.substr(i);
+}
+function debug(msg) {
+  if(DEBUG_OUTPUT) {
+    console.log(msg);
+  }
+}
+
+/*#### MAIN ####*/
+// Parse and copy the PDF
+function parsePDFContent(pdf_name) {
+  let dataBuffer = fs.readFileSync(SOURCE_DIR+pdf_name);
+  pdf(dataBuffer).then(function(data) {
+    debug(data.text);
+    var arr = data.text.split("\n");
+    var name= arr[4];
+    var lohnabrechnung_monat="";
+    arr.forEach(function(val) {
+      if(val.indexOf("Lohnabrechnung") !== -1 ) {
+        lohnabrechnung_monat = val.split("Lohnabrechnung ")[1].split(' /')[0];
+        debug(lohnabrechnung_monat);
+      }
+    });
+
+    var newPDFname = TARGET_FILE_PREFIX + removeWhitespace(name) +"_" + removeWhitespace(lohnabrechnung_monat)+".pdf";
+    debug(newPDFname);
+    copyFile(SOURCE_DIR+pdf_name, TARGET_DIR+newPDFname);
+  });
+}
+
+// Go through file list
+pdfFileList.forEach(file => {
+  debug(getExtension(file));
+  if(getExtension(file) == ".pdf") {
+    parsePDFContent(file);
+  }
+});
